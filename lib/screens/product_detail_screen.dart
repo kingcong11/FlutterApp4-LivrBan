@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/products_provider.dart';
 
 /* Packages */
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 
-/* Models */
-
-/* Widgets */
-import '../widgets/main_drawer.dart';
-import '../widgets/homepage_banner.dart';
-import '../widgets/products_gridview.dart';
-import '../widgets/products_gridview_filter.dart';
-
-class HomePageScreen extends StatelessWidget {
+class ProductDetailScreen extends StatelessWidget {
   /* Properties */
+  static const routeName = '/product-detail';
 
   /* Builders */
   Widget appbarBuilder(BuildContext context) {
     return AppBar(
       title: Text(
         'LivrBan',
-        style: TextStyle(fontSize: 25, color: Colors.white),
+        style: TextStyle(fontSize: 25),
       ),
       centerTitle: true,
       actions: [
@@ -29,8 +25,8 @@ class HomePageScreen extends StatelessWidget {
         ),
       ],
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
-      backgroundColor: Theme.of(context).accentColor,
+      // iconTheme: IconThemeData(color: Colors.white),
+      // backgroundColor: Theme.of(context).accentColor,
     );
   }
 
@@ -42,38 +38,29 @@ class HomePageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productsProvider = Provider.of<Products>(context, listen: false);
+    final productId = ModalRoute.of(context).settings.arguments as  String;
+    final loadedProduct = productsProvider.findById(productId);
     final _mediaQuery = MediaQuery.of(context);
     final appbar = appbarBuilder(context);
     final availableContentSize = _computeMainContentSize(_mediaQuery, appbar);
 
     return Scaffold(
       appBar: appbar,
-      drawer: MainDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                height: availableContentSize * .3,
-                child: HomepageBanner(),
-              ),
-              Container(
-                height: availableContentSize * .07,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ProductsGridFilters(),
-              ),
-              Container(
-                // height: availableContentSize * .63,
-                height: availableContentSize * 1,
-                padding: const EdgeInsets.all(25),
-                child: ProductsGrid(),
-              ),
+                height: availableContentSize * .45,
+                color: Colors.lime,
+                child: Text(productId),
+              )
             ],
           ),
         ),
       ),
-      backgroundColor: Theme.of(context).accentColor,
     );
   }
 }
