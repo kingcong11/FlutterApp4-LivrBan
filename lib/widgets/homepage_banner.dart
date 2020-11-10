@@ -31,7 +31,7 @@ class HomepageBanner extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 7),
                   child: Text(
                     'This Catie Uphostered Panel Bed defines basics made beautifully.',
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: Colors.white70, fontSize: 15),
                   ),
                 ),
               ],

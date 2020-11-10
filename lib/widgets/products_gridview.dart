@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 
 /* Providers */
 import '../providers/products_provider.dart';
-import '../providers/product_provider.dart';
 
 /* Models */
 
@@ -14,30 +13,42 @@ import '../providers/product_provider.dart';
 import 'product_item_card.dart';
 
 class ProductsGrid extends StatelessWidget {
+  final bool showFavoritesOnly;
+
+  ProductsGrid(this.showFavoritesOnly);
+
   @override
   Widget build(BuildContext context) {
     final productsProvider = Provider.of<Products>(context);
-    final products = productsProvider.getAllProducts;
+    final products = (showFavoritesOnly)
+        ? productsProvider.getAllFavoriteProducts
+        : productsProvider.getAllProducts;
 
-    return StaggeredGridView.countBuilder(
-      crossAxisCount: 10,
-      itemCount: products.length,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      itemBuilder: (ctx, index) {
-        return ChangeNotifierProvider(
-          create: (ctx) => products[index],
-          child: ProductItemCard(
-            // id: products[index].id,
-            // title: products[index].title,
-            // price: products[index].price,
-            // imageUrl: products[index].imageUrl,
-          ),
-        );
-      },
-      staggeredTileBuilder: (int index) {
-        return StaggeredTile.count(5, index.isEven ? 7 : 5);
-      },
-    );
+    if (!products.isEmpty) {
+      return StaggeredGridView.countBuilder(
+        crossAxisCount: 10,
+        itemCount: products.length,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        itemBuilder: (ctx, index) {
+          return ChangeNotifierProvider.value(
+            value: products[index],
+            child: ProductItemCard(),
+          );
+        },
+        staggeredTileBuilder: (int index) {
+          return StaggeredTile.count(5, index.isEven ? 7 : 5);
+        },
+      );
+    } else {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: Text(
+          'You have nothing in your wishlist yet..',
+          style: TextStyle(fontSize: 24, color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
   }
 }
