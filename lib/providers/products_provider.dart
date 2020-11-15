@@ -11,7 +11,7 @@ class Products with ChangeNotifier {
         id: 'p1',
         title: 'Valmy Sofa Beige',
         description: 'A red shirt - it is pretty red!',
-        price: 29.99,
+        price: 629.99,
         imageUrl: 'assets/images/products/1-removebg-preview.png'),
     Product(
         id: 'p2',

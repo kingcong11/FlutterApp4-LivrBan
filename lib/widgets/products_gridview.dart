@@ -24,7 +24,7 @@ class ProductsGrid extends StatelessWidget {
         ? productsProvider.getAllFavoriteProducts
         : productsProvider.getAllProducts;
 
-    if (!products.isEmpty) {
+    if (products.isNotEmpty) {
       return StaggeredGridView.countBuilder(
         crossAxisCount: 10,
         itemCount: products.length,

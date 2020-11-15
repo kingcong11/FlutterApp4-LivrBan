@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:livrban/providers/product_provider.dart';
 import 'package:provider/provider.dart';
 
 /* Providers */
 import './providers/products_provider.dart';
+import './providers/cart_provider.dart';
 
 /* Screens */
 import './screens/product_detail_screen.dart';
 import './screens/homepage_screen.dart';
+import './screens/my_bag_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,8 +17,11 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => Products(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => Products()),
+        ChangeNotifierProvider(create: (ctx) => Cart()),
+      ],
       child: MaterialApp(
         title: 'LivrBan',
         theme: ThemeData(
@@ -31,6 +35,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (ctx) => HomePageScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+          MyBagScreen.routeName: (ctx) => MyBagScreen(),
         },
       ),
     );

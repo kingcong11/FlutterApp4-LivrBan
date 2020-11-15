@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
 /* Packages */
+import 'package:provider/provider.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 
-/* Models */
+/* Providers */
+import '../providers/cart_provider.dart';
+
+/* Screens */
+import '../screens/my_bag_screen.dart';
 
 /* Widgets */
 import '../widgets/main_drawer.dart';
 import '../widgets/homepage_banner.dart';
 import '../widgets/products_gridview.dart';
 import '../widgets/products_gridview_filter.dart';
+import '../widgets/badge.dart';
 
 enum ProductOptions { All, Favorites }
 
@@ -31,9 +37,20 @@ class _HomePageScreenState extends State<HomePageScreen> {
       ),
       centerTitle: true,
       actions: [
-        IconButton(
-          icon: Icon(FeatherIcons.shoppingBag),
-          onPressed: () {},
+        Consumer<Cart>(
+          builder: (context, cart, child) {
+            return Badge(
+              child: child,
+              color: Color(0xFFf1e3cb),
+              value: cart.itemCount.toString(),
+            );
+          },
+          child: IconButton(
+            icon: Icon(FeatherIcons.shoppingBag),
+            onPressed: () {
+              Navigator.of(context).pushNamed(MyBagScreen.routeName);
+            },
+          ),
         ),
         PopupMenuButton(
           icon: Icon(FeatherIcons.moreVertical),

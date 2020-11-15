@@ -14,26 +14,29 @@ class HomepageBanner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(FeatherIcons.chevronLeft, color: Colors.white, size: 28),
-                SizedBox(height: 25),
+                SizedBox(height: 5),
                 Padding(
                   padding: const EdgeInsets.only(left: 7),
                   child: Text(
-                    'Aesthetic Chair',
+                    'Aesthetic Living',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(left: 7),
-                  child: Text(
-                    'This Catie Uphostered Panel Bed defines basics made beautifully.',
-                    style: TextStyle(color: Colors.white70, fontSize: 15),
+                SizedBox(height: 5),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 7),
+                    child: Text(
+                      'This Catie Uphostered Panel Bed defines basics made beautifully. this is a sample passage to make this text very long',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 5,
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
                   ),
-                ),
+                )
               ],
             ),
           ),

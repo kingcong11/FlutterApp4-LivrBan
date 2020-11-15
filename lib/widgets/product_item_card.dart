@@ -13,22 +13,9 @@ import '../screens/product_detail_screen.dart';
 class ProductItemCard extends StatelessWidget {
   /* Properties */
 
-  // final String id;
-  // final String title;
-  // final double price;
-  // final String imageUrl;
-
-  // ProductItemCard({
-  //   @required this.id,
-  //   @required this.title,
-  //   @required this.price,
-  //   @required this.imageUrl,
-  // });
-
   @override
   Widget build(BuildContext context) {
     final loadedProduct = Provider.of<Product>(context);
-
     return LayoutBuilder(
       builder: (_, constraint) {
         return ClipRRect(
@@ -72,38 +59,41 @@ class ProductItemCard extends StatelessWidget {
                             backgroundColor:
                                 Theme.of(context).accentColor.withOpacity(.3),
                             child: IconButton(
-                                icon: Icon(
-                                  (loadedProduct.isFavorite)
-                                      ? Icons.favorite
-                                      : FeatherIcons.heart,
-                                  size: 18,
-                                  color: Theme.of(context).accentColor,
-                                ),
-                                onPressed: () {
-                                  loadedProduct.toggleIsFavorite();
-                                  Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: Container(
-                                      height: 40,
-                                      alignment: Alignment.centerLeft,
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFF505050),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Text(
-                                        (loadedProduct.isFavorite) ? 'Added to Wishlist.' : 'Removed Wishlist.',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
+                              icon: Icon(
+                                (loadedProduct.isFavorite)
+                                    ? Icons.favorite
+                                    : FeatherIcons.heart,
+                                size: 18,
+                                color: Theme.of(context).accentColor,
+                              ),
+                              onPressed: () {
+                                loadedProduct.toggleIsFavorite();
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Container(
+                                    height: 40,
+                                    alignment: Alignment.centerLeft,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFF505050),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      (loadedProduct.isFavorite)
+                                          ? 'Added to Wishlist.'
+                                          : 'Removed Wishlist.',
+                                      style: TextStyle(
+                                        color: Colors.white,
                                       ),
                                     ),
-                                    backgroundColor: Colors.transparent,
-                                    duration: Duration(milliseconds: 2300),
-                                    elevation: 0,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 15),
-                                  ));
-                                }),
+                                  ),
+                                  backgroundColor: Colors.transparent,
+                                  duration: Duration(milliseconds: 2300),
+                                  elevation: 0,
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15),
+                                ));
+                              },
+                            ),
                           ),
                         )
                       ],
@@ -136,8 +126,8 @@ class ProductItemCard extends StatelessWidget {
                             child: Container(
                               alignment: Alignment.bottomRight,
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 8, right: 12),
+                                padding: const EdgeInsets.only(
+                                    bottom: 8, right: 12),
                                 child: FittedBox(
                                   child: Text(
                                     '\$ ${loadedProduct.price}',
