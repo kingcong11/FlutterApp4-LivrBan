@@ -14,6 +14,8 @@ class BagItemCard extends StatelessWidget {
   final double price;
   final String imageURL;
   final String productId;
+  final bool showDecoration;
+  final double prefferedHeight;
 
   const BagItemCard({
     Key key,
@@ -23,6 +25,8 @@ class BagItemCard extends StatelessWidget {
     @required this.price,
     @required this.imageURL,
     @required this.productId,
+    this.showDecoration = true,
+    this.prefferedHeight = 130,
   }) : super(key: key);
 
   @override
@@ -65,15 +69,19 @@ class BagItemCard extends StatelessWidget {
         Provider.of<Cart>(context, listen: false).removeItem(productId);
       },
       child: Container(
-        height: 130,
+        height: prefferedHeight,
         margin: const EdgeInsets.symmetric(vertical: 5),
-        decoration: BoxDecoration(color: Colors.white, boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            blurRadius: 7,
-            spreadRadius: 1,
-          )
-        ]),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            if (showDecoration)
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 7,
+                spreadRadius: 1,
+              ),
+          ],
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -93,15 +101,16 @@ class BagItemCard extends StatelessWidget {
             Flexible(
               flex: 55,
               child: Container(
-                // color: Colors.lightGreen,
                 padding: const EdgeInsets.all(5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
                       title,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Row(
                       children: [
@@ -118,6 +127,10 @@ class BagItemCard extends StatelessWidget {
                       ],
                     ),
                     Spacer(),
+                    Divider(
+                      height: 1,
+                      color: Colors.grey[600],
+                    ),
                     Row(
                       children: [
                         Text(

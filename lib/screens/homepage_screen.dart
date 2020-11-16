@@ -20,12 +20,13 @@ import '../widgets/badge.dart';
 enum ProductOptions { All, Favorites }
 
 class HomePageScreen extends StatefulWidget {
+  /* Properties */
+  static const routeName = '/';
   @override
   _HomePageScreenState createState() => _HomePageScreenState();
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  /* Properties */
   var _showFavoritesOnly = false;
 
   /* Builders */
@@ -115,7 +116,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
     return Scaffold(
       appBar: appbar,
-      drawer: MainDrawer(),
+      drawer: MainDrawer(_mediaQuery.padding.top),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -131,7 +132,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 child: ProductsGridFilters(),
               ),
               Container(
-                // height: availableContentSize * .63,
                 height: availableContentSize * 1,
                 padding: const EdgeInsets.all(25),
                 child: ProductsGrid(_showFavoritesOnly),

@@ -4,11 +4,13 @@ import 'package:provider/provider.dart';
 /* Providers */
 import './providers/products_provider.dart';
 import './providers/cart_provider.dart';
+import './providers/orders_provider.dart';
 
 /* Screens */
 import './screens/product_detail_screen.dart';
 import './screens/homepage_screen.dart';
 import './screens/my_bag_screen.dart';
+import './screens/orders_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,6 +23,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (ctx) => Products()),
         ChangeNotifierProvider(create: (ctx) => Cart()),
+        ChangeNotifierProvider(create: (ctx) => Orders()),
       ],
       child: MaterialApp(
         title: 'LivrBan',
@@ -36,6 +39,7 @@ class MyApp extends StatelessWidget {
           '/': (ctx) => HomePageScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           MyBagScreen.routeName: (ctx) => MyBagScreen(),
+          OrdersScreen.routeName: (ctx) => OrdersScreen(),
         },
       ),
     );

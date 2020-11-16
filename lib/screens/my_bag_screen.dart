@@ -11,6 +11,8 @@ import '../providers/cart_provider.dart';
 /* Widgets */
 import '../widgets/badge.dart';
 import '../widgets/bag_item_card.dart';
+import '../widgets/bag_checkout_section.dart';
+import '../widgets/empty_bag_section.dart';
 
 class MyBagScreen extends StatelessWidget {
   /* Properties */
@@ -34,10 +36,7 @@ class MyBagScreen extends StatelessWidget {
           },
           child: IconButton(
             icon: Icon(FeatherIcons.shoppingBag),
-            onPressed: () {
-              // Navigator.of(context).pushNamed(MyBagScreen.routeName);
-              print('sample');
-            },
+            onPressed: () {},
           ),
         ),
       ],
@@ -78,97 +77,46 @@ class MyBagScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: ListView.builder(
-                    itemCount: cartData.itemCount,
-                    itemBuilder: (context, index) {
-                      return BagItemCard(
-                        productId: cartData.getAllCartItems.keys.toList()[index],
-                        id: cartData.getAllCartItems.values.toList()[index].id,
-                        price: cartData.getAllCartItems.values
-                            .toList()[index]
-                            .price,
-                        quantity: cartData.getAllCartItems.values
-                            .toList()[index]
-                            .quantity,
-                        title: cartData.getAllCartItems.values
-                            .toList()[index]
-                            .title,
-                        imageURL: cartData.getAllCartItems.values
-                            .toList()[index]
-                            .imageURL,
-                        key: ValueKey(
-                            cartData.getAllCartItems.values.toList()[index].id),
-                      );
-                    }),
+                child: (cartData.itemCount > 0)
+                    ? ListView.builder(
+                        itemCount: cartData.itemCount,
+                        itemBuilder: (context, index) {
+                          return BagItemCard(
+                            productId:
+                                cartData.getAllCartItems.keys.toList()[index],
+                            id: cartData.getAllCartItems.values
+                                .toList()[index]
+                                .id,
+                            price: cartData.getAllCartItems.values
+                                .toList()[index]
+                                .price,
+                            quantity: cartData.getAllCartItems.values
+                                .toList()[index]
+                                .quantity,
+                            title: cartData.getAllCartItems.values
+                                .toList()[index]
+                                .title,
+                            imageURL: cartData.getAllCartItems.values
+                                .toList()[index]
+                                .imageURL,
+                            key: ValueKey(cartData.getAllCartItems.values
+                                .toList()[index]
+                                .id),
+                          );
+                        })
+                    : EmptyBagSection(availableContentSize: availableContentSize),
               ),
             ),
-            Container(
-              height: availableContentSize * .15,
-              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Divider(
-                    height: 1,
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Total',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                      Text('(Including GST)'),
-                      Spacer(),
-                      Text(
-                        fmf.output.symbolOnLeft,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: FlatButton(
-                        color: Color(0xFFfca652),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          'Proceed to Checkout',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ),
-                ],
+            if (cartData.itemCount > 0)
+              Container(
+                height: availableContentSize * .15,
+                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                color: Colors.white,
+                child: BagCheckoutSection(cartData: cartData, fmf: fmf),
               ),
-            ),
           ],
         ),
       ),
     );
-  }
-}
-
-class Sample extends StatelessWidget {
-  const Sample({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

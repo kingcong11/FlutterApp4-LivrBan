@@ -129,9 +129,6 @@ class ProductDetailScreen extends StatelessWidget {
                                       color: Theme.of(context).accentColor,
                                       size: 10,
                                     ),
-                                    // onRatingUpdate: (rating) {
-                                    //   // print(rating);
-                                    // },
                                     onRatingUpdate: null,
                                   ),
                                 ),

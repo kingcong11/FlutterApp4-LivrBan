@@ -18,6 +18,7 @@ class Badge extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         child,
+        if(int.parse(value) > 0)
         Positioned(
           right: 8,
           top: 8,
