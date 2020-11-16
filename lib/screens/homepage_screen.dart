@@ -1,83 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-/* Models */
-import '../models/product.dart';
+/* Packages */
+import 'package:provider/provider.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+
+/* Providers */
+import '../providers/cart_provider.dart';
+
+/* Screens */
+import '../screens/my_bag_screen.dart';
 
 /* Widgets */
 import '../widgets/main_drawer.dart';
 import '../widgets/homepage_banner.dart';
-import '../widgets/product_item_card.dart';
+import '../widgets/products_gridview.dart';
+import '../widgets/products_gridview_filter.dart';
+import '../widgets/badge.dart';
 
-class HomePageScreen extends StatelessWidget {
+enum ProductOptions { All, Favorites }
+
+class HomePageScreen extends StatefulWidget {
   /* Properties */
-  final List<Product> loadedProducts = [
-    Product(
-      id: 'p1',
-      title: 'Valmy Sofa Beige',
-      description: 'A red shirt - it is pretty red!',
-      price: 29.99,
-      imageUrl:'assets/images/products/1-removebg-preview.png'
-    ),
-    Product(
-      id: 'p2',
-      title: 'Vanity Gray',
-      description: 'A nice pair of trousers.',
-      price: 59.99,
-      imageUrl:'assets/images/products/2-removebg-preview.png'
-    ),
-    Product(
-      id: 'p3',
-      title: 'Gray Shade',
-      description: 'Warm and cozy - exactly what you need for the winter.',
-      price: 19.99,
-      imageUrl:'assets/images/products/3-removebg-preview.png'
-    ),
-    Product(
-      id: 'p4',
-      title: 'Deep Blue Wood',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:'assets/images/products/4-removebg-preview.png'
-    ),
-    Product(
-      id: 'p5',
-      title: 'Illutionist Gray',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:'assets/images/products/5-removebg-preview.png'
-    ),
-    Product(
-      id: 'p6',
-      title: 'Pearl White',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:'assets/images/products/6-removebg-preview.png'
-    ),
-    Product(
-      id: 'p7',
-      title: 'Mustard Couch',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:'assets/images/products/7-removebg-preview.png'
-    ),
-    Product(
-      id: 'p8',
-      title: 'Orange Madness',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:'assets/images/products/8-removebg-preview.png'
-    ),
-    Product(
-      id: 'p9',
-      title: 'Chesnut Comfort',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:'assets/images/products/9-removebg-preview.png'
-    ),
-  ];
+  static const routeName = '/';
+  @override
+  _HomePageScreenState createState() => _HomePageScreenState();
+}
+
+class _HomePageScreenState extends State<HomePageScreen> {
+  var _showFavoritesOnly = false;
 
   /* Builders */
   Widget appbarBuilder(BuildContext context) {
@@ -88,9 +38,62 @@ class HomePageScreen extends StatelessWidget {
       ),
       centerTitle: true,
       actions: [
-        IconButton(
-          icon: Icon(FeatherIcons.shoppingBag),
-          onPressed: () {},
+        Consumer<Cart>(
+          builder: (context, cart, child) {
+            return Badge(
+              child: child,
+              color: Color(0xFFf1e3cb),
+              value: cart.itemCount.toString(),
+            );
+          },
+          child: IconButton(
+            icon: Icon(FeatherIcons.shoppingBag),
+            onPressed: () {
+              Navigator.of(context).pushNamed(MyBagScreen.routeName);
+            },
+          ),
+        ),
+        PopupMenuButton(
+          icon: Icon(FeatherIcons.moreVertical),
+          itemBuilder: (_) => [
+            PopupMenuItem(
+              child: Row(
+                children: [
+                  Text('All Products'),
+                  Spacer(),
+                  Icon(
+                    FeatherIcons.layers,
+                    size: 20,
+                    color: Theme.of(context).accentColor,
+                  ),
+                ],
+              ),
+              value: ProductOptions.All,
+            ),
+            PopupMenuItem(
+              child: Row(
+                children: [
+                  Text('Wishlist'),
+                  Spacer(),
+                  Icon(
+                    FeatherIcons.heart,
+                    size: 20,
+                    color: Theme.of(context).accentColor,
+                  ),
+                ],
+              ),
+              value: ProductOptions.Favorites,
+            )
+          ],
+          onSelected: (selectedValue) {
+            setState(() {
+              if (selectedValue == ProductOptions.Favorites) {
+                _showFavoritesOnly = true;
+              } else {
+                _showFavoritesOnly = false;
+              }
+            });
+          },
         ),
       ],
       elevation: 0,
@@ -113,7 +116,7 @@ class HomePageScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: appbar,
-      drawer: MainDrawer(),
+      drawer: MainDrawer(_mediaQuery.padding.top),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -126,59 +129,12 @@ class HomePageScreen extends StatelessWidget {
               Container(
                 height: availableContentSize * .07,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Filters',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Icon(
-                      FeatherIcons.filter,
-                      color: Colors.white,
-                      size: 19,
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    const Text(
-                      'Sort by',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Icon(
-                      MdiIcons.sortReverseVariant,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                  ],
-                ),
+                child: ProductsGridFilters(),
               ),
               Container(
-                // height: availableContentSize * .63,
                 height: availableContentSize * 1,
                 padding: const EdgeInsets.all(25),
-                child: StaggeredGridView.countBuilder(
-                  crossAxisCount: 10,
-                  itemCount: loadedProducts.length,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  itemBuilder: (ctx, index) {
-                    return ProductItemCard(
-                      id: loadedProducts[index].id,
-                      title: loadedProducts[index].title,
-                      price: loadedProducts[index].price,
-                      imageUrl: loadedProducts[index].imageUrl,
-                    );
-                  },
-                  staggeredTileBuilder: (int index) {
-                    return StaggeredTile.count(5, index.isEven ? 7 : 5);
-                  },
-                ),
+                child: ProductsGrid(_showFavoritesOnly),
               ),
             ],
           ),
