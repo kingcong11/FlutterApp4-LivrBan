@@ -92,6 +92,7 @@ class OrderItemCard extends StatelessWidget {
                     title: op.title,
                     prefferedHeight: 100,
                     showDecoration: false,
+                    isDismissible: false,
                   );
                 }).toList(),
                 Divider(
