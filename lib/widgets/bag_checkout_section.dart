@@ -49,7 +49,7 @@ class BagCheckoutSection extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.only(top: 5),
             child: FlatButton(
-              color: Color(0xFFfca652),
+              color: Theme.of(context).primaryColor.withOpacity(.95),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -58,6 +58,7 @@ class BagCheckoutSection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
               onPressed: () {

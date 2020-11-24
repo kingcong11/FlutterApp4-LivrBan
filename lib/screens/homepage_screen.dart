@@ -42,7 +42,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           builder: (context, cart, child) {
             return Badge(
               child: child,
-              color: Color(0xFFf1e3cb),
+              color: Color(0xFF17786D),
               value: cart.itemCount.toString(),
             );
           },

@@ -23,7 +23,7 @@ class MyBagScreen extends StatelessWidget {
     return AppBar(
       title: Text(
         'LivrBan',
-        style: TextStyle(fontSize: 25),
+        style: TextStyle(fontSize: 25, color: Colors.black),
       ),
       centerTitle: true,
       actions: [
@@ -41,6 +41,8 @@ class MyBagScreen extends StatelessWidget {
         ),
       ],
       elevation: 0,
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(color: Colors.black),
     );
   }
 
@@ -104,7 +106,8 @@ class MyBagScreen extends StatelessWidget {
                                 .id),
                           );
                         })
-                    : EmptyBagSection(availableContentSize: availableContentSize),
+                    : EmptyBagSection(
+                        availableContentSize: availableContentSize),
               ),
             ),
             if (cartData.itemCount > 0)

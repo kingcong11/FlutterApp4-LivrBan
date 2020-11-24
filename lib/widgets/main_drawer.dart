@@ -6,6 +6,7 @@ import 'package:livrban/screens/orders_screen.dart';
 
 /* Screens */
 import '../screens/orders_screen.dart';
+import '../screens/user_products_screen.dart';
 
 class MainDrawer extends StatelessWidget {
   final double statusBarSize;
@@ -13,9 +14,13 @@ class MainDrawer extends StatelessWidget {
   MainDrawer(this.statusBarSize);
 
   /* Builders */
-  Widget listileBuilder(String title, IconData icon, Function callbackHandler) {
+  Widget listileBuilder(String title, IconData icon, Function callbackHandler,
+      BuildContext context) {
     return ListTile(
-      leading: Icon(icon),
+      leading: Icon(
+        icon,
+        color: Theme.of(context).primaryColor,
+      ),
       title: Text(
         title,
         style: TextStyle(
@@ -57,12 +62,23 @@ class MainDrawer extends StatelessWidget {
               'Home',
               FeatherIcons.home,
               () => Navigator.of(context).pushReplacementNamed('/'),
+              context,
             ),
             Divider(),
             listileBuilder(
               'Orders',
               FeatherIcons.package,
-              () => Navigator.of(context).pushReplacementNamed(OrdersScreen.routeName),
+              () => Navigator.of(context)
+                  .pushReplacementNamed(OrdersScreen.routeName),
+              context,
+            ),
+            Divider(),
+            listileBuilder(
+              'Products',
+              Icons.vibration,
+              () => Navigator.of(context)
+                  .pushReplacementNamed(UserProductsScreen.routeName),
+              context,
             ),
             Divider(),
           ],

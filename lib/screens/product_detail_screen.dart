@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 /* Packages */
 import 'package:provider/provider.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 /* Providers */
 import '../providers/products_provider.dart';
@@ -14,6 +13,7 @@ import './my_bag_screen.dart';
 
 /* Widgets */
 import '../widgets/badge.dart';
+import '../widgets/my_custom_rating_bar.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   /* Properties */
@@ -24,7 +24,7 @@ class ProductDetailScreen extends StatelessWidget {
     return AppBar(
       title: Text(
         'LivrBan',
-        style: TextStyle(fontSize: 25),
+        style: TextStyle(fontSize: 25, color: Colors.black),
       ),
       centerTitle: true,
       actions: [
@@ -44,6 +44,8 @@ class ProductDetailScreen extends StatelessWidget {
         ),
       ],
       elevation: 0,
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(color: Colors.black),
     );
   }
 
@@ -113,25 +115,7 @@ class ProductDetailScreen extends StatelessWidget {
                               ),
                               Container(
                                 height: constraints.maxHeight * .3,
-                                child: FittedBox(
-                                  alignment: Alignment.centerLeft,
-                                  child: RatingBar.builder(
-                                    initialRating: 3.5,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemPadding:
-                                        EdgeInsets.symmetric(horizontal: 1),
-                                    itemSize: 100,
-                                    itemBuilder: (context, _) => Icon(
-                                      Icons.star,
-                                      color: Theme.of(context).accentColor,
-                                      size: 10,
-                                    ),
-                                    onRatingUpdate: null,
-                                  ),
-                                ),
+                                child: MyCustomRatingBar(),
                               ),
                             ],
                           );
@@ -162,9 +146,10 @@ class ProductDetailScreen extends StatelessWidget {
                       child: Text(
                         '\$ ${loadedProduct.price.toString()}',
                         style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.lightGreen),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.lightGreen,
+                        ),
                       ),
                     ),
                   ),
@@ -206,21 +191,32 @@ class ProductDetailScreen extends StatelessWidget {
                                 content: Container(
                                   height: 40,
                                   margin: const EdgeInsets.only(bottom: 50),
-                                  alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.all(10),
+                                  padding: const EdgeInsets.only(
+                                      top: 10, left: 10, bottom: 10),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).accentColor,
+                                    color: Color(0xFF091a2f),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: Text(
-                                    'Succesfully Added your Cart.',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Succesfully Added your Cart.',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SnackBarAction(
+                                        label: 'UNDO',
+                                        onPressed: () => cartProvider
+                                            .undoAddToCart(loadedProduct.id),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 backgroundColor: Colors.transparent,
-                                duration: Duration(milliseconds: 3000),
+                                duration: Duration(milliseconds: 4000),
                                 padding: EdgeInsets.symmetric(horizontal: 15),
                                 elevation: 0,
                               ));
