@@ -81,38 +81,40 @@ class Products with ChangeNotifier {
     return _items.firstWhere((product) => product.id == id);
   }
 
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     const url = 'https://flutter-livrban.firebaseio.com/products';
-    return http.post(
-      url,
-      body: json.encode(
-        {
-          'title': product.title,
-          'description': product.description,
-          'price': product.price,
-          'imageUrl': product.imageUrl,
-          'isFavorite': product.isFavorite,
-        },
-      ),
-    ).then((res) {
-      var response = json.decode(res.body);
+
+    try {
+
+      /* await keyword means that we need to wait for this operation to finished first before we continue on the succeding operation */
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            'title': product.title,
+            'description': product.description,
+            'price': product.price,
+            'imageUrl': product.imageUrl,
+            'isFavorite': product.isFavorite,
+          },
+        ),
+      );
+
+      var decodedResponse = json.decode(response.body);
 
       final newProduct = Product(
-        id: response['name'],
+        id: decodedResponse['name'],
         title: product.title,
         description: product.description,
         price: product.price,
         imageUrl: product.imageUrl,
       );
+
       _items.add(newProduct);
       notifyListeners();
-    }).catchError((error){
-      /* I placed the catch after the then method because if I placed the catch right after the post method, the then method 
-      will be excuted anyway right after my catch method resolves. placing the catch method at the end will skip suceeding 
-      then methods. which in this case, we do not want to happen. eg failing the post request but local adding of product
-      still persists if we place the catch right after post method. */
+    } catch (error) {
       throw error;
-    });
+    }
   }
 
   void updateProduct(String productId, Product newProduct) {
