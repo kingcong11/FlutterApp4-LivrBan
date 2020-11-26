@@ -126,9 +126,7 @@ class UserProductItem extends StatelessWidget {
                       onSelected: (selectedValue) {
                         switch (selectedValue) {
                           case productAction.edit:
-                            Navigator.of(context).pushNamed(
-                                EditProductScreen.routeName,
-                                arguments: product.id);
+                            Navigator.of(context).pushNamed(EditProductScreen.routeName, arguments: product.id);
                             break;
                           case productAction.delete:
                             Provider.of<Products>(context, listen: false).deleteProduct(product.id);
@@ -138,7 +136,7 @@ class UserProductItem extends StatelessWidget {
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color:Theme.of(context).errorColor,
+                                  color: Theme.of(context).errorColor,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(

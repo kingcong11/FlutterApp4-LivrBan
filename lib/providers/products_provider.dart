@@ -1,6 +1,8 @@
-// import 'package:provider/provider.dart';
-
 import 'package:flutter/material.dart';
+
+/* Packages */
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 /* Models */
 import './product_provider.dart';
@@ -79,17 +81,38 @@ class Products with ChangeNotifier {
     return _items.firstWhere((product) => product.id == id);
   }
 
-  void addProduct(Product product) {
-    final newProduct = Product(
-      id: DateTime.now().toString(),
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-    );
+  Future<void> addProduct(Product product) {
+    const url = 'https://flutter-livrban.firebaseio.com/products';
+    return http.post(
+      url,
+      body: json.encode(
+        {
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+          'isFavorite': product.isFavorite,
+        },
+      ),
+    ).then((res) {
+      var response = json.decode(res.body);
 
-    _items.add(newProduct);
-    notifyListeners();
+      final newProduct = Product(
+        id: response['name'],
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
+      _items.add(newProduct);
+      notifyListeners();
+    }).catchError((error){
+      /* I placed the catch after the then method because if I placed the catch right after the post method, the then method 
+      will be excuted anyway right after my catch method resolves. placing the catch method at the end will skip suceeding 
+      then methods. which in this case, we do not want to happen. eg failing the post request but local adding of product
+      still persists if we place the catch right after post method. */
+      throw error;
+    });
   }
 
   void updateProduct(String productId, Product newProduct) {

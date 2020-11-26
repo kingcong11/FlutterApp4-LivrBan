@@ -37,6 +37,7 @@ dependencies:
     git:
       url: git://github.com/anisalibegic/flutter_money_formatter.git
   intl: ^0.16.1
+  http: ^0.12.2
 
 dev_dependencies:
   flutter_test:
