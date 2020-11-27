@@ -123,13 +123,14 @@ class UserProductItem extends StatelessWidget {
                           value: productAction.delete,
                         ),
                       ],
-                      onSelected: (selectedValue) {
+                      onSelected: (selectedValue) async {
                         switch (selectedValue) {
                           case productAction.edit:
-                            Navigator.of(context).pushNamed(EditProductScreen.routeName, arguments: product.id);
+                            Navigator.of(context).pushNamed(
+                                EditProductScreen.routeName,
+                                arguments: product.id);
                             break;
                           case productAction.delete:
-                            Provider.of<Products>(context, listen: false).deleteProduct(product.id);
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Container(
                                 height: 40,
@@ -151,6 +152,11 @@ class UserProductItem extends StatelessWidget {
                               elevation: 0,
                               padding: EdgeInsets.symmetric(horizontal: 15),
                             ));
+                            try {
+                              await Provider.of<Products>(context,
+                                      listen: false)
+                                  .deleteProduct(product.id);
+                            } catch (error){ }
                             break;
                         }
                       },

@@ -75,13 +75,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
         _imageUrlController.text = _editedProduct.imageUrl;
       }
       // remove this later, testing purposes
-      _initValues = {
-        'title': 'Testing',
-        'description': 'sample description',
-        'price': '123',
-      };
-      _imageUrlController.text =
-          'assets/images/products/10-removebg-preview.png';
+      // _initValues = {
+      //   'title': 'Testing',
+      //   'description': 'sample description',
+      //   'price': '123',
+      // };
+      // _imageUrlController.text = 'assets/images/products/10-removebg-preview.png';
     }
 
     _isInitialized = true;
@@ -97,23 +96,28 @@ class _EditProductScreenState extends State<EditProductScreen> {
       ),
       centerTitle: true,
       actions: [
-        // Consumer<Cart>(
-        //   builder: (context, cart, child) {
-        //     return Badge(
-        //       child: child,
-        //       value: cart.itemCount.toString(),
-        //     );
-        //   },
-        //   child: IconButton(
-        //     icon: Icon(FeatherIcons.shoppingBag),
-        //     onPressed: () {
-        //       Navigator.of(context).pushNamed(MyBagScreen.routeName);
-        //     },
-        //   ),
-        // ),
       ],
       elevation: 0,
     );
+  }
+
+  Future<void> _errorDiaglogBuilder() {
+    return showDialog<Null>(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: Text('An error Occured!'),
+            content: Text('Something went wrong'),
+            actions: [
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: Text('Okay'),
+              ),
+            ],
+          );
+        });
   }
 
   /* Getters */
@@ -146,40 +150,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
       if (_editedProduct.id != null) {
         /* Update product */
-        Provider.of<Products>(context, listen: false)
-            .updateProduct(_editedProduct.id, _editedProduct);
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
+        try {
+          await Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
+        } catch (error) {
+          await _errorDiaglogBuilder();
+        }
       } else {
         /* Add a new product */
         try {
           await Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
         } catch (error) {
-          await showDialog<Null>(
-              context: context,
-              builder: (ctx) {
-                return AlertDialog(
-                  title: Text('An error Occured!'),
-                  content: Text('Something went wrong'),
-                  actions: [
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.of(ctx).pop();
-                      },
-                      child: Text('Okay'),
-                    ),
-                  ],
-                );
-              });
-        } finally {
-          setState(() {
-            _isLoading = false;
-          });
-          Navigator.of(context).pop();
+          await _errorDiaglogBuilder();
         }
       }
+
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop();
     } else {
       return;
     }
