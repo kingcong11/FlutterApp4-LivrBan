@@ -23,6 +23,8 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -156,7 +158,30 @@ class UserProductItem extends StatelessWidget {
                               await Provider.of<Products>(context,
                                       listen: false)
                                   .deleteProduct(product.id);
-                            } catch (error){ }
+                            } catch (error) {
+                              scaffold.hideCurrentSnackBar();
+                              scaffold.showSnackBar(SnackBar(
+                                content: Container(
+                                  height: 40,
+                                  alignment: Alignment.centerLeft,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[900],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    error.toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                backgroundColor: Colors.transparent,
+                                duration: Duration(milliseconds: 4000),
+                                elevation: 0,
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                              ));
+                            }
                             break;
                         }
                       },

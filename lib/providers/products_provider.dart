@@ -173,7 +173,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String productId) async {
-    final url = 'https://flutter-livrban.firebaseio.com/products/$productId';
+    final url = 'https://flutter-livrban.firebaseio.com/products/$productId.json';
 
     /* implementing optimistic updating */
     try {
