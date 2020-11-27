@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../models/http_exception.dart';
 
-class Product with ChangeNotifier{
+class Product with ChangeNotifier {
   final String id;
   final String title;
   final String description;
@@ -17,8 +20,30 @@ class Product with ChangeNotifier{
     this.isFavorite = false,
   });
 
-  void toggleIsFavorite() {
-    isFavorite = !isFavorite;
-    notifyListeners();
+  Future<void> toggleIsFavorite() async {
+    final url = 'https://flutter-livrban.firebaseio.com/products/$id.json';
+
+    try {
+      isFavorite = !isFavorite;
+      notifyListeners();
+
+      final response = await http.patch(
+        url,
+        body: json.encode(
+          {
+            'isFavorite': isFavorite,
+          },
+        ),
+      );
+
+      if(response.statusCode >= 400){
+        /* if something went wrong and failed patch. restore the state from memory */
+        isFavorite = !isFavorite;
+        notifyListeners();
+        throw new HttpException('Something went wrong when adding item to wishlist.');
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 }

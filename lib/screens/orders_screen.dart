@@ -16,10 +16,31 @@ import '../widgets/badge.dart';
 import '../widgets/main_drawer.dart';
 import '../widgets/empty_bag_section.dart';
 import '../widgets/order_item_card.dart';
+import '../widgets/list_tile_skelleton.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   /* Properties */
   static const routeName = '/orders';
+
+  @override
+  _OrdersScreenState createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  /* Properties */
+  Future _ordersFuture;
+  
+  /* Methods */
+  Future _obtainOrdersFuture() {
+    return Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+  }
+
+
+  @override
+  initState() {
+    _ordersFuture = _obtainOrdersFuture();
+    super.initState();
+  }
 
   /* Builders */
   Widget appbarBuilder(BuildContext context) {
@@ -60,7 +81,6 @@ class OrdersScreen extends StatelessWidget {
     final appbar = appbarBuilder(context);
     final _mediaQuery = MediaQuery.of(context);
     final double availableContentSize = _computeMainContentSize(_mediaQuery, appbar);
-    final orderData = Provider.of<Orders>(context, listen: false);
 
     return Scaffold(
       appBar: appbar,
@@ -70,14 +90,39 @@ class OrdersScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: (orderData.getAllOrders.length > 0) ? ListView.builder(
-                  itemCount: orderData.getAllOrders.length,
-                  itemBuilder: (ctx, i) {
-                    return OrderItemCard(order: orderData.getAllOrders[i]);
-                  },
-                ) : EmptyBagSection(availableContentSize: availableContentSize),
+              child: FutureBuilder(
+                future: _ordersFuture,
+                builder: (_, dataSnapshot) {
+                  if (dataSnapshot.connectionState == ConnectionState.waiting) {
+                    return FittedBox(
+                      child: FittedBox(
+                        child: ListStileSkelleton(),
+                      ),
+                    );
+                  } else if (dataSnapshot.hasError) {
+                    // improve this later
+                    return Center(
+                      child: Text('An Error Occured'),
+                    );
+                  } else {
+                    return Consumer<Orders>(
+                      builder: (ctx, orderData, child) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: (orderData.getAllOrders.length > 0)
+                              ? ListView.builder(
+                                  itemCount: orderData.getAllOrders.length,
+                                  itemBuilder: (ctx, i) {
+                                    return OrderItemCard(order: orderData.getAllOrders[i]);
+                                  },
+                                )
+                              : EmptyBagSection(
+                                  availableContentSize: availableContentSize),
+                        );
+                      },
+                    );
+                  }
+                },
               ),
             ),
           ],

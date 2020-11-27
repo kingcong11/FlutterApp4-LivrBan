@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 /* Packages */
 import 'package:provider/provider.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 /* Providers */
 import '../providers/cart_provider.dart';
+import '../providers/products_provider.dart';
 
 /* Screens */
 import '../screens/my_bag_screen.dart';
@@ -16,6 +18,7 @@ import '../widgets/homepage_banner.dart';
 import '../widgets/products_gridview.dart';
 import '../widgets/products_gridview_filter.dart';
 import '../widgets/badge.dart';
+import '../widgets/loading_products_gridview.dart';
 
 enum ProductOptions { All, Favorites }
 
@@ -27,7 +30,37 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
+  /* Properties */
   var _showFavoritesOnly = false;
+  var _isLoading = true;
+
+  // @override
+  // initState() {
+  //   Provider.of<Products>(context, listen: false).fetchAndSetProducts().then((_) {
+  //     print('Products Loaded.');
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   });
+  //   super.initState();
+  // }
+  @override
+  initState() {
+    Provider.of<Products>(context, listen: false)
+        .fetchAndSetProducts()
+        .then((_) {
+      print('Products Loaded.');
+      setState(() {
+        _isLoading = false;
+      });
+    });
+    super.initState();
+  }
+
+  /* Methods */
+  Future<void> _refreshProducts() async {
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+  }
 
   /* Builders */
   Widget appbarBuilder(BuildContext context) {
@@ -118,25 +151,51 @@ class _HomePageScreenState extends State<HomePageScreen> {
       appBar: appbar,
       drawer: MainDrawer(_mediaQuery.padding.top),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: availableContentSize * .3,
-                child: HomepageBanner(),
-              ),
-              Container(
-                height: availableContentSize * .07,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ProductsGridFilters(),
-              ),
-              Container(
-                height: availableContentSize * 1,
-                padding: const EdgeInsets.all(25),
-                child: ProductsGrid(_showFavoritesOnly),
-              ),
-            ],
+        child: LiquidPullToRefresh(
+          backgroundColor: Color(0xFF1abf8a),
+          onRefresh: _refreshProducts,
+          showChildOpacityTransition: false,
+          springAnimationDurationInMilliseconds: 900,
+          animSpeedFactor: 8,
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: availableContentSize * .3,
+                  child: HomepageBanner(),
+                ),
+                Container(
+                  height: availableContentSize * .07,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ProductsGridFilters(),
+                ),
+                (_isLoading)
+                    ? Flexible(
+                        fit: FlexFit.loose,
+                        child: Container(
+                          padding: const EdgeInsets.all(25),
+                          child: LoadingProductsGrid(),
+                        ),
+                      )
+                    : Flexible(
+                        fit: FlexFit.loose,
+                        child: Container(
+                          padding: const EdgeInsets.all(25),
+                          child: ProductsGrid(_showFavoritesOnly),
+                        ),
+                      ),
+                // : Flexible(
+                //     fit: FlexFit.loose,
+                //     child: Container(
+                //       padding: const EdgeInsets.all(25),
+                //       child: LoadingProductsGrid(),
+                //     ),
+                //   ),
+              ],
+            ),
           ),
         ),
       ),

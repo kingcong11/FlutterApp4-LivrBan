@@ -23,6 +23,8 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -123,7 +125,7 @@ class UserProductItem extends StatelessWidget {
                           value: productAction.delete,
                         ),
                       ],
-                      onSelected: (selectedValue) {
+                      onSelected: (selectedValue) async {
                         switch (selectedValue) {
                           case productAction.edit:
                             Navigator.of(context).pushNamed(
@@ -131,14 +133,13 @@ class UserProductItem extends StatelessWidget {
                                 arguments: product.id);
                             break;
                           case productAction.delete:
-                            Provider.of<Products>(context, listen: false).deleteProduct(product.id);
                             Scaffold.of(context).showSnackBar(SnackBar(
                               content: Container(
                                 height: 40,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color:Theme.of(context).errorColor,
+                                  color: Theme.of(context).errorColor,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -153,6 +154,34 @@ class UserProductItem extends StatelessWidget {
                               elevation: 0,
                               padding: EdgeInsets.symmetric(horizontal: 15),
                             ));
+                            try {
+                              await Provider.of<Products>(context,
+                                      listen: false)
+                                  .deleteProduct(product.id);
+                            } catch (error) {
+                              scaffold.hideCurrentSnackBar();
+                              scaffold.showSnackBar(SnackBar(
+                                content: Container(
+                                  height: 40,
+                                  alignment: Alignment.centerLeft,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[900],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    error.toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                backgroundColor: Colors.transparent,
+                                duration: Duration(milliseconds: 4000),
+                                elevation: 0,
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                              ));
+                            }
                             break;
                         }
                       },

@@ -16,6 +16,8 @@ class ProductItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loadedProduct = Provider.of<Product>(context);
+    final scaffold = Scaffold.of(context);
+
     return LayoutBuilder(
       builder: (_, constraint) {
         return ClipRRect(
@@ -66,9 +68,8 @@ class ProductItemCard extends StatelessWidget {
                                 size: 18,
                                 color: Theme.of(context).accentColor,
                               ),
-                              onPressed: () {
-                                loadedProduct.toggleIsFavorite();
-                                Scaffold.of(context).showSnackBar(SnackBar(
+                              onPressed: () async {
+                                scaffold.showSnackBar(SnackBar(
                                   content: Container(
                                     height: 40,
                                     alignment: Alignment.centerLeft,
@@ -79,8 +80,8 @@ class ProductItemCard extends StatelessWidget {
                                     ),
                                     child: Text(
                                       (loadedProduct.isFavorite)
-                                          ? 'Added to Wishlist.'
-                                          : 'Removed Wishlist.',
+                                          ? 'Removed from Wishlist.'
+                                          : 'Added to Wishlist.',
                                       style: TextStyle(
                                         color: Colors.white,
                                       ),
@@ -89,9 +90,33 @@ class ProductItemCard extends StatelessWidget {
                                   backgroundColor: Colors.transparent,
                                   duration: Duration(milliseconds: 2300),
                                   elevation: 0,
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 15),
+                                  padding: EdgeInsets.symmetric(horizontal: 15),
                                 ));
+                                try {
+                                  await loadedProduct.toggleIsFavorite();
+                                } catch (error) {
+                                  scaffold.hideCurrentSnackBar();
+                                  scaffold.showSnackBar(SnackBar(
+                                    content: Container(
+                                      height: 40,
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFF505050),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(error.toString()),
+                                    ),
+                                    backgroundColor: Colors.transparent,
+                                    duration: Duration(milliseconds: 2300),
+                                    elevation: 0,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 15),
+                                  ));
+
+                                  // print(error.toString());
+
+                                }
                               },
                             ),
                           ),
@@ -126,8 +151,8 @@ class ProductItemCard extends StatelessWidget {
                             child: Container(
                               alignment: Alignment.bottomRight,
                               child: Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 8, right: 12),
+                                padding:
+                                    const EdgeInsets.only(bottom: 8, right: 12),
                                 child: FittedBox(
                                   child: Text(
                                     '\$ ${loadedProduct.price}',

@@ -24,8 +24,19 @@ class ProductsGrid extends StatelessWidget {
         ? productsProvider.getAllFavoriteProducts
         : productsProvider.getAllProducts;
 
-    if (products.isNotEmpty) {
+    if (showFavoritesOnly && products.isEmpty) {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: Text(
+          'You have nothing in your wishlist yet..',
+          style: TextStyle(fontSize: 24, color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else {
       return StaggeredGridView.countBuilder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
         crossAxisCount: 10,
         itemCount: products.length,
         mainAxisSpacing: 10,
@@ -39,15 +50,6 @@ class ProductsGrid extends StatelessWidget {
         staggeredTileBuilder: (int index) {
           return StaggeredTile.count(5, index.isEven ? 7 : 5);
         },
-      );
-    } else {
-      return Align(
-        alignment: Alignment.topCenter,
-        child: Text(
-          'You have nothing in your wishlist yet..',
-          style: TextStyle(fontSize: 24, color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
       );
     }
   }
