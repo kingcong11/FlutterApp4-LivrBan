@@ -20,7 +20,7 @@ class UserProductsScreen extends StatelessWidget {
 
   /* Methods */
   Future<void> _refreshProducts(BuildContext context) async {
-    await Provider.of<Products>(context, listen: false).fetchAndSetProduct();
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
   }
 
   /* Builders */

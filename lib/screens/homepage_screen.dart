@@ -34,12 +34,22 @@ class _HomePageScreenState extends State<HomePageScreen> {
   var _showFavoritesOnly = false;
   var _isLoading = true;
 
+  // @override
+  // initState() {
+  //   Provider.of<Products>(context, listen: false).fetchAndSetProducts().then((_) {
+  //     print('Products Loaded.');
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   });
+  //   super.initState();
+  // }
   @override
   initState() {
     Provider.of<Products>(context, listen: false)
-        .fetchAndSetProduct()
+        .fetchAndSetProducts()
         .then((_) {
-      print('this is loaded');
+      print('Products Loaded.');
       setState(() {
         _isLoading = false;
       });
@@ -49,7 +59,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
   /* Methods */
   Future<void> _refreshProducts() async {
-    await Provider.of<Products>(context, listen: false).fetchAndSetProduct();
+    await Provider.of<Products>(context, listen: false).fetchAndSetProducts();
   }
 
   /* Builders */

@@ -32,8 +32,7 @@ class BagItemCard extends StatelessWidget {
   }) : super(key: key);
 
   /* Builders */
-  Widget mainCardBuilder(
-      FlutterMoneyFormatter totalPrice, FlutterMoneyFormatter formattedPrice) {
+  Widget mainCardBuilder(FlutterMoneyFormatter totalPrice, FlutterMoneyFormatter formattedPrice) {
     return Container(
       height: prefferedHeight,
       margin: const EdgeInsets.symmetric(vertical: 5),

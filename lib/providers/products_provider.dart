@@ -82,14 +82,17 @@ class Products with ChangeNotifier {
     return _items.firstWhere((product) => product.id == id);
   }
 
-  Future<void> fetchAndSetProduct() async {
+  Future<void> fetchAndSetProducts() async {
     const url = 'https://flutter-livrban.firebaseio.com/products.json';
 
     try {
       final response = await http.get(url);
-      final extractedData = json.decode(response.body)
-          as Map<String, dynamic>; // Object and dynamic is the same.
+      final extractedData = json.decode(response.body) as Map<String, dynamic>; // Object and dynamic is the same.
       final List<Product> loadedProduct = [];
+
+      if(extractedData == null){
+        return;
+      }
 
       extractedData.forEach((prodId, prodData) {
         loadedProduct.add(Product(
@@ -145,8 +148,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> updateProduct(String productId, Product newProduct) async {
-    final url =
-        'https://flutter-livrban.firebaseio.com/products/$productId.json';
+    final url = 'https://flutter-livrban.firebaseio.com/products/$productId.json';
 
     try {
       await http.patch(

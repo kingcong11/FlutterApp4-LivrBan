@@ -8,7 +8,7 @@ import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import '../providers/cart_provider.dart';
 import '../providers/orders_provider.dart';
 
-class BagCheckoutSection extends StatelessWidget {
+class BagCheckoutSection extends StatefulWidget {
   const BagCheckoutSection({
     Key key,
     @required this.cartData,
@@ -19,7 +19,17 @@ class BagCheckoutSection extends StatelessWidget {
   final FlutterMoneyFormatter fmf;
 
   @override
+  _BagCheckoutSectionState createState() => _BagCheckoutSectionState();
+}
+
+class _BagCheckoutSectionState extends State<BagCheckoutSection> {
+  /* Properties */
+  var _isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -40,7 +50,7 @@ class BagCheckoutSection extends StatelessWidget {
             Text('(Including GST)'),
             Spacer(),
             Text(
-              fmf.output.symbolOnLeft,
+              widget.fmf.output.symbolOnLeft,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
@@ -49,11 +59,11 @@ class BagCheckoutSection extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.only(top: 5),
             child: FlatButton(
-              color: Theme.of(context).primaryColor.withOpacity(.95),
+              color: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: Text(
+              child: (_isLoading) ? CircularProgressIndicator() : Text(
                 'Place Order',
                 style: TextStyle(
                   fontSize: 24,
@@ -61,33 +71,48 @@ class BagCheckoutSection extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              onPressed: () {
-                Provider.of<Orders>(context, listen: false).addOrder(
-                  cartData.getAllCartItems.values.toList(),
-                  cartData.cartTotal,
-                );
-                cartData.clear();
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Container(
-                    height: 40,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).accentColor,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      'Order placed successfully.',
-                      style: TextStyle(
-                        color: Colors.white,
+              disabledColor: Color(0xFF7BABE6),
+              onPressed: (_isLoading) ? null : () async {
+                setState(() {
+                  _isLoading = true;
+                });
+
+                try {
+                  await Provider.of<Orders>(context, listen: false).addOrder(
+                    widget.cartData.getAllCartItems.values.toList(),
+                    widget.cartData.cartTotal,
+                  );
+
+                  widget.cartData.clear();
+
+                  scaffold.showSnackBar(SnackBar(
+                    content: Container(
+                      height: 40,
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).accentColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'Order placed successfully.',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  backgroundColor: Colors.transparent,
-                  duration: Duration(milliseconds: 3000),
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  elevation: 0,
-                ));
+                    backgroundColor: Colors.transparent,
+                    duration: Duration(milliseconds: 3000),
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    elevation: 0,
+                  ));
+                } catch (error) {
+                  // show error message here
+                }
+
+                setState(() {
+                  _isLoading = false;
+                });
               },
             ),
           ),

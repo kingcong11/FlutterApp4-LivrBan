@@ -16,10 +16,30 @@ import '../widgets/badge.dart';
 import '../widgets/main_drawer.dart';
 import '../widgets/empty_bag_section.dart';
 import '../widgets/order_item_card.dart';
+import '../widgets/list_tile_skelleton.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   /* Properties */
   static const routeName = '/orders';
+
+  @override
+  _OrdersScreenState createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  /* Properties */
+  var _isLoading = true;
+
+  @override
+  initState() {
+    Provider.of<Orders>(context, listen: false).fetchAndSetOrders().then((_) {
+      print('Orders Loaded.');
+      setState(() {
+        _isLoading = false;
+      });
+    });
+    super.initState();
+  }
 
   /* Builders */
   Widget appbarBuilder(BuildContext context) {
@@ -59,7 +79,8 @@ class OrdersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final appbar = appbarBuilder(context);
     final _mediaQuery = MediaQuery.of(context);
-    final double availableContentSize = _computeMainContentSize(_mediaQuery, appbar);
+    final double availableContentSize =
+        _computeMainContentSize(_mediaQuery, appbar);
     final orderData = Provider.of<Orders>(context, listen: false);
 
     return Scaffold(
@@ -70,15 +91,19 @@ class OrdersScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: (orderData.getAllOrders.length > 0) ? ListView.builder(
-                  itemCount: orderData.getAllOrders.length,
-                  itemBuilder: (ctx, i) {
-                    return OrderItemCard(order: orderData.getAllOrders[i]);
-                  },
-                ) : EmptyBagSection(availableContentSize: availableContentSize),
-              ),
+              child: (_isLoading)
+                  ? FittedBox(child: ListStileSkelleton())
+                  : Container(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: (orderData.getAllOrders.length > 0)
+                          ? ListView.builder(
+                              itemCount: orderData.getAllOrders.length,
+                              itemBuilder: (ctx, i) {
+                                return OrderItemCard(order: orderData.getAllOrders[i]);
+                              },
+                            )
+                          : EmptyBagSection( availableContentSize: availableContentSize),
+                    ),
             ),
           ],
         ),

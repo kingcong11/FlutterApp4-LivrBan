@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.16.1
   http: ^0.12.2
   skeleton_text: ^1.0.0
+  pk_skeleton: ^0.0.2
   liquid_pull_to_refresh: ^2.0.0
 
 dev_dependencies:
