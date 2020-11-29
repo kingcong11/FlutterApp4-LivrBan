@@ -194,7 +194,7 @@ class ProductDetailScreen extends StatelessWidget {
                                   padding: const EdgeInsets.only(
                                       top: 10, left: 10, bottom: 10),
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF091a2f),
+                                    color: Color(0xFF091a2f), //oxford blue
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Row(

@@ -24,7 +24,7 @@ enum ProductOptions { All, Favorites }
 
 class HomePageScreen extends StatefulWidget {
   /* Properties */
-  static const routeName = '/';
+  static const routeName = '/homepage';
   @override
   _HomePageScreenState createState() => _HomePageScreenState();
 }
@@ -46,14 +46,19 @@ class _HomePageScreenState extends State<HomePageScreen> {
   // }
   @override
   initState() {
-    Provider.of<Products>(context, listen: false)
-        .fetchAndSetProducts()
-        .then((_) {
-      print('Products Loaded.');
-      setState(() {
-        _isLoading = false;
+    try {
+      Provider.of<Products>(context, listen: false)
+          .fetchAndSetProducts()
+          .then((_) {
+        print('Products Loaded.');
+        setState(() {
+          _isLoading = false;
+        });
       });
-    });
+    } catch (e) {
+      print(e);
+    }
+
     super.initState();
   }
 
