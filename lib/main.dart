@@ -16,6 +16,7 @@ import './screens/my_bag_screen.dart';
 import './screens/orders_screen.dart';
 import './screens/user_products_screen.dart';
 import './screens/edit_product_screen.dart';
+import './screens/auth_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -64,8 +65,9 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         debugShowCheckedModeBanner: false,
+        home: AuthScreen(),
         routes: {
-          '/': (ctx) => HomePageScreen(),
+          // '/': (ctx) => HomePageScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           MyBagScreen.routeName: (ctx) => MyBagScreen(),
           OrdersScreen.routeName: (ctx) => OrdersScreen(),
