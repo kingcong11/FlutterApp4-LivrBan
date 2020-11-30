@@ -19,10 +19,11 @@ import './screens/orders_screen.dart';
 import './screens/user_products_screen.dart';
 import './screens/edit_product_screen.dart';
 import './screens/auth_screen.dart';
+import './screens/errorScreen.dart';
+import './screens/intro_screen.dart';
 
 Future main() async {
   await DotEnv().load('.env');
-  print(DotEnv().env['API_KEY']);
   runApp(MyApp());
 }
 
@@ -59,12 +60,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (ctx) => AuthenticationService()),
         ChangeNotifierProxyProvider<AuthenticationService, Products>(
           create: null,
-          update: (ctx, auth, previousProducts) => Products(auth.token, auth.userId, (previousProducts == null) ? [] : previousProducts.getAllProducts),
+          update: (ctx, auth, previousProducts) => Products(
+            auth.token,
+            auth.userId,
+            (previousProducts == null) ? [] : previousProducts.getAllProducts,
+          ),
         ),
         ChangeNotifierProvider(create: (ctx) => Cart()),
         ChangeNotifierProxyProvider<AuthenticationService, Orders>(
           create: null,
-          update: (ctx, auth, previousOrders) => Orders(auth.token, auth.userId, (previousOrders == null) ? [] : previousOrders.getAllOrders),
+          update: (ctx, auth, previousOrders) => Orders(
+            auth.token,
+            auth.userId,
+            (previousOrders == null) ? [] : previousOrders.getAllOrders,
+          ),
         ),
       ],
       child: Consumer<AuthenticationService>(
@@ -77,7 +86,21 @@ class MyApp extends StatelessWidget {
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           debugShowCheckedModeBanner: false,
-          home: (authService.isAuthenticated) ? HomePageScreen() : AuthScreen(),
+          home: (authService.isAuthenticated)
+              ? HomePageScreen()
+              : FutureBuilder(
+                  future: authService.tryAutoLogin(),
+                  builder: (ctx, dataSnapshot) {
+                    if (dataSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return IntroScreen();
+                    } else if (dataSnapshot.hasError) {
+                      return ErrorScreen();
+                    } else {
+                      return AuthScreen();
+                    }
+                  },
+                ),
           routes: {
             HomePageScreen.routeName: (ctx) => HomePageScreen(),
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),

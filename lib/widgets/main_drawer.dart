@@ -90,6 +90,7 @@ class MainDrawer extends StatelessWidget {
               FeatherIcons.logOut,
               () {
                 Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/');
                 Provider.of<AuthenticationService>(context, listen: false).signOut();
               },
               context,
