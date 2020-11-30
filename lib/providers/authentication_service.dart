@@ -2,11 +2,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/http_exception.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class AuthenticationService with ChangeNotifier {
   String _token;
   DateTime _expiryDate;
   String _userId;
+
+  final String apiKey = DotEnv().env['API_KEY'];
+
 
   Future<void> authenticate(
     String email,
@@ -14,7 +19,7 @@ class AuthenticationService with ChangeNotifier {
     String urlSegment,
   ) async {
     final url =
-        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyB5WvrYW4FfOx8aXvbjx-1lHYkgjNwp6Ew';
+        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=$apiKey';
 
     try {
       final response = await http.post(
@@ -36,7 +41,8 @@ class AuthenticationService with ChangeNotifier {
         /* Authenticate User */
         _token = extractedResponse['idToken']; //this is for the user's login
         _userId = extractedResponse['localId']; // id of the user
-        _expiryDate = DateTime.now().add(Duration(seconds: int.parse(extractedResponse['expiresIn'])));
+        _expiryDate = DateTime.now()
+            .add(Duration(seconds: int.parse(extractedResponse['expiresIn'])));
       }
 
       notifyListeners();
@@ -59,8 +65,12 @@ class AuthenticationService with ChangeNotifier {
     return authenticate(email, password, 'signUp');
   }
 
-  Future<void> signOut() async {
-    // code...
+  signOut() {
+    _token = null;
+    _expiryDate = null;
+    _userId = null;
+
+    notifyListeners();
   }
 
   bool get isAuthenticated {

@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 /* packages */
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:livrban/screens/orders_screen.dart';
+import 'package:provider/provider.dart';
 
 /* Screens */
 import '../screens/orders_screen.dart';
 import '../screens/user_products_screen.dart';
+
+/* Providers */
+import '../providers/authentication_service.dart';
 
 class MainDrawer extends StatelessWidget {
   final double statusBarSize;
@@ -78,6 +82,16 @@ class MainDrawer extends StatelessWidget {
               Icons.vibration,
               () => Navigator.of(context)
                   .pushReplacementNamed(UserProductsScreen.routeName),
+              context,
+            ),
+            Divider(),
+            listileBuilder(
+              'Logout',
+              FeatherIcons.logOut,
+              () {
+                Navigator.of(context).pop();
+                Provider.of<AuthenticationService>(context, listen: false).signOut();
+              },
               context,
             ),
             Divider(),

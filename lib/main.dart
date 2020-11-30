@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 /* Packages */
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';
 
 /* Providers */
@@ -19,7 +20,9 @@ import './screens/user_products_screen.dart';
 import './screens/edit_product_screen.dart';
 import './screens/auth_screen.dart';
 
-void main() {
+Future main() async {
+  await DotEnv().load('.env');
+  print(DotEnv().env['API_KEY']);
   runApp(MyApp());
 }
 

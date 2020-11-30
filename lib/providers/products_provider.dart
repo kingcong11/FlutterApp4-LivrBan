@@ -12,7 +12,6 @@ class Products with ChangeNotifier {
 
   final authToken;
   final userId;
-
   List<Product> _items = [
     // Product(
     //     id: 'p1',

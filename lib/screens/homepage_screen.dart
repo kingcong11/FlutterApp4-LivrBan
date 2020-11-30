@@ -192,13 +192,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
                           child: ProductsGrid(_showFavoritesOnly),
                         ),
                       ),
-                // : Flexible(
-                //     fit: FlexFit.loose,
-                //     child: Container(
-                //       padding: const EdgeInsets.all(25),
-                //       child: LoadingProductsGrid(),
-                //     ),
-                //   ),
               ],
             ),
           ),
