@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livrban/providers/authentication_service.dart';
 import 'package:provider/provider.dart';
 
 /* Packages */
@@ -17,6 +18,7 @@ class ProductItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final loadedProduct = Provider.of<Product>(context);
     final scaffold = Scaffold.of(context);
+    final auth = Provider.of<AuthenticationService>(context, listen: false);
 
     return LayoutBuilder(
       builder: (_, constraint) {
@@ -93,7 +95,7 @@ class ProductItemCard extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(horizontal: 15),
                                 ));
                                 try {
-                                  await loadedProduct.toggleIsFavorite();
+                                  await loadedProduct.toggleIsFavorite(auth.token, auth.userId);
                                 } catch (error) {
                                   scaffold.hideCurrentSnackBar();
                                   scaffold.showSnackBar(SnackBar(

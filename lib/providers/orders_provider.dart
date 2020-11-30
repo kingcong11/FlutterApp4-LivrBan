@@ -21,13 +21,17 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final authToken;
+  final userId;
+
+  Orders(this.authToken, this.userId, this._orders);
 
   List<OrderItem> get getAllOrders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    const url = 'https://flutter-livrban.firebaseio.com/orders.json';
+    final url = 'https://flutter-livrban.firebaseio.com/orders/$userId.json?auth=$authToken';
 
     try {
       final response = await http.get(url);
@@ -63,7 +67,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double totalAmount) async {
-    const url = 'https://flutter-livrban.firebaseio.com/orders.json';
+    final url = 'https://flutter-livrban.firebaseio.com/orders/$userId.json?auth=$authToken';
     final timeStamp = DateTime.now();
 
     try {
@@ -96,13 +100,5 @@ class Orders with ChangeNotifier {
     } catch (error) {
       throw error;
     }
-
-    // _orders.add(OrderItem(
-    // id: DateTime.now().toString(),
-    //   products: prodcartProductsucts,
-    //   amount: totalAmount,
-    //   dateOrdered: timeStamp,
-    // ));
-    // notifyListeners();
   }
 }

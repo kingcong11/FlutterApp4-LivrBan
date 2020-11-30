@@ -20,27 +20,30 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  Future<void> toggleIsFavorite() async {
-    final url = 'https://flutter-livrban.firebaseio.com/products/$id.json';
+  Future<void> toggleIsFavorite(String authToken, String userId) async {
+    final url = 'https://flutter-livrban.firebaseio.com/userFavorites/$userId/$id.json?auth=$authToken';
 
     try {
+      var oldStatus = isFavorite;
       isFavorite = !isFavorite;
       notifyListeners();
 
-      final response = await http.patch(
+      final response = await http.put(
         url,
-        body: json.encode(
-          {
-            'isFavorite': isFavorite,
-          },
-        ),
+        body: json.encode(isFavorite),
       );
 
-      if(response.statusCode >= 400){
+      if (response.statusCode >= 400) {
         /* if something went wrong and failed patch. restore the state from memory */
         isFavorite = !isFavorite;
         notifyListeners();
-        throw new HttpException('Something went wrong when adding item to wishlist.');
+        if (oldStatus == true) {
+          throw new HttpException(
+              'Something went wrong removing item to wishlist.');
+        } else {
+          throw new HttpException(
+              'Something went wrong adding item to wishlist.');
+        }
       }
     } catch (error) {
       throw error;
