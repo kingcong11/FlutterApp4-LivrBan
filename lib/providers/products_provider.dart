@@ -9,6 +9,9 @@ import './product_provider.dart';
 import '../models/http_exception.dart';
 
 class Products with ChangeNotifier {
+
+  final authToken;
+  final userId;
   List<Product> _items = [
     // Product(
     //     id: 'p1',
@@ -66,6 +69,9 @@ class Products with ChangeNotifier {
     //     imageUrl: 'assets/images/products/9-removebg-preview.png'),
   ];
 
+  /* Contstructor */
+  Products(this.authToken, this.userId, this._items);
+
   List<Product> get getAllProducts {
     // only returns the copy of the private property _items so that only in this class we can change
     // the values of our proivate property and then notify all the listeners to this class, because if
@@ -82,8 +88,10 @@ class Products with ChangeNotifier {
     return _items.firstWhere((product) => product.id == id);
   }
 
-  Future<void> fetchAndSetProducts() async {
-    const url = 'https://flutter-livrban.firebaseio.com/products.json';
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+
+    final String filterString = (filterByUser) ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    final url = 'https://flutter-livrban.firebaseio.com/products.json?auth=$authToken&$filterString';
 
     try {
       final response = await http.get(url);
@@ -94,6 +102,11 @@ class Products with ChangeNotifier {
         return;
       }
 
+    final userFavoritesUrl = 'https://flutter-livrban.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
+    
+    final userFavoritesUrlResponse = await http.get(userFavoritesUrl);
+    final extractedUserFavorites = json.decode(userFavoritesUrlResponse.body);
+
       extractedData.forEach((prodId, prodData) {
         loadedProduct.add(Product(
           id: prodId,
@@ -101,7 +114,7 @@ class Products with ChangeNotifier {
           description: prodData['description'],
           price: prodData['price'],
           imageUrl: prodData['imageUrl'],
-          isFavorite: prodData['isFavorite'],
+          isFavorite: (extractedUserFavorites == null) ? false : extractedUserFavorites[prodId] ?? false,
         ));
       });
 
@@ -113,7 +126,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    const url = 'https://flutter-livrban.firebaseio.com/products.json';
+    final url = 'https://flutter-livrban.firebaseio.com/products.json?auth=$authToken';
 
     try {
       /* await keyword means that we need to wait for this operation to finished first before we continue on the succeding operation */
@@ -125,7 +138,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'price': product.price,
             'imageUrl': product.imageUrl,
-            'isFavorite': product.isFavorite,
+            'creatorId': userId,
           },
         ),
       );
@@ -148,7 +161,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> updateProduct(String productId, Product newProduct) async {
-    final url = 'https://flutter-livrban.firebaseio.com/products/$productId.json';
+    final url = 'https://flutter-livrban.firebaseio.com/products/$productId.json?auth=$authToken';
 
     try {
       await http.patch(
@@ -175,7 +188,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String productId) async {
-    final url = 'https://flutter-livrban.firebaseio.com/products/$productId.json';
+    final url = 'https://flutter-livrban.firebaseio.com/products/$productId.json?auth=$authToken';
 
     /* implementing optimistic updating */
     try {

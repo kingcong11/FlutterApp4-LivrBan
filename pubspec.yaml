@@ -41,6 +41,10 @@ dependencies:
   skeleton_text: ^1.0.0
   pk_skeleton: ^0.0.2
   liquid_pull_to_refresh: ^2.0.0
+  loading_overlay: ^0.2.1
+  flutter_spinkit: "^4.1.2"
+  flutter_dotenv: ^2.1.0
+  shared_preferences: ^0.5.12+4
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +74,7 @@ flutter:
     - assets/images/products/8-removebg-preview.png
     - assets/images/products/9-removebg-preview.png
     - assets/images/products/10-removebg-preview.png
+    - .env
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
