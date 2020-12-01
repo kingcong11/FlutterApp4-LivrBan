@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';
 
+/* Helpers */
+import './helpers/custom_route.dart';
+
 /* Providers */
 import './providers/products_provider.dart';
 import './providers/cart_provider.dart';
@@ -84,6 +87,12 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.light,
             fontFamily: 'Rockford Sans',
             visualDensity: VisualDensity.adaptivePlatformDensity,
+            pageTransitionsTheme: PageTransitionsTheme(
+              builders: {
+                // TargetPlatform.android: CustomPageTransitionBuilder(),
+                // TargetPlatform.iOS: CustomPageTransitionBuilder(),
+              }
+            )
           ),
           debugShowCheckedModeBanner: false,
           home: (authService.isAuthenticated)
