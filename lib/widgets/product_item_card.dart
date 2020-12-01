@@ -49,11 +49,17 @@ class ProductItemCard extends StatelessWidget {
                       alignment: AlignmentDirectional.center,
                       children: [
                         Container(
-                          child: Image.asset(
-                            loadedProduct.imageUrl,
-                            fit: BoxFit.cover,
-                            isAntiAlias: true,
-                            filterQuality: FilterQuality.high,
+                          child: Hero(
+                            tag: loadedProduct.id,
+                            child: FadeInImage(
+                              placeholder: AssetImage(
+                                'assets/images/default-placeholder-image.png',
+                              ),
+                              image: AssetImage(
+                                loadedProduct.imageUrl,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Positioned(
@@ -95,7 +101,8 @@ class ProductItemCard extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(horizontal: 15),
                                 ));
                                 try {
-                                  await loadedProduct.toggleIsFavorite(auth.token, auth.userId);
+                                  await loadedProduct.toggleIsFavorite(
+                                      auth.token, auth.userId);
                                 } catch (error) {
                                   scaffold.hideCurrentSnackBar();
                                   scaffold.showSnackBar(SnackBar(

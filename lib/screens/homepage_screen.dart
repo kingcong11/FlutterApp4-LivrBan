@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 /* Packages */
@@ -55,6 +57,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
           _isLoading = false;
         });
       });
+    } on SocketException catch(e){
+      // say that there is no internet conncection
     } catch (e) {
       print(e);
     }

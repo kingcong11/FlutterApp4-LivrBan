@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 /* Packages */
@@ -95,6 +97,9 @@ class _AuthScreenState extends State<AuthScreen>
           break;
       }
 
+      await _showErrorDialog(errorMessage);
+    } on SocketException catch (e) {
+      var errorMessage = 'Please check your internet connection.';
       await _showErrorDialog(errorMessage);
     } catch (e) {
       // general error
@@ -284,30 +289,41 @@ class _AuthScreenState extends State<AuthScreen>
                                           duration: Duration(milliseconds: 300),
                                           curve: Curves.fastOutSlowIn,
                                           constraints: BoxConstraints(
-                                            minHeight: (_authMode == AuthMode.SignIn) ? 0 : 60,
-                                            maxHeight: (_authMode == AuthMode.SignIn) ? 0 : 120,
+                                            minHeight:
+                                                (_authMode == AuthMode.SignIn)
+                                                    ? 0
+                                                    : 60,
+                                            maxHeight:
+                                                (_authMode == AuthMode.SignIn)
+                                                    ? 0
+                                                    : 120,
                                           ),
                                           child: FadeTransition(
                                             opacity: _opacityAnimation,
                                             child: SlideTransition(
                                               position: _slideAnimation,
                                               child: TextFormField(
-                                                enabled: (_authMode == AuthMode.SignUp),
+                                                enabled: (_authMode ==
+                                                    AuthMode.SignUp),
                                                 decoration: InputDecoration(
                                                   labelText: 'Confirm Password',
-                                                  prefixIcon: Icon(Icons.lock_outline),
+                                                  prefixIcon:
+                                                      Icon(Icons.lock_outline),
                                                 ),
                                                 obscureText: true,
-                                                textInputAction: TextInputAction.done,
-                                                validator:
-                                                    (_authMode == AuthMode.SignUp)
-                                                        ? (value) {
-                                                            if (value != _passwordController.text) {
-                                                              return 'Passwords do not match!';
-                                                            }
-                                                            return null;
-                                                          }
-                                                        : null,
+                                                textInputAction:
+                                                    TextInputAction.done,
+                                                validator: (_authMode ==
+                                                        AuthMode.SignUp)
+                                                    ? (value) {
+                                                        if (value !=
+                                                            _passwordController
+                                                                .text) {
+                                                          return 'Passwords do not match!';
+                                                        }
+                                                        return null;
+                                                      }
+                                                    : null,
                                               ),
                                             ),
                                           ),
