@@ -19,7 +19,8 @@ class AuthScreen extends StatefulWidget {
   _AuthScreenState createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends State<AuthScreen>
+    with SingleTickerProviderStateMixin {
   /* Properties */
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.SignIn;
@@ -28,8 +29,11 @@ class _AuthScreenState extends State<AuthScreen> {
     'password': '',
   };
   final _passwordController = TextEditingController();
-
   var _isLoading = false;
+  // var _formHeight = 280;
+  AnimationController _authFormAnimationController;
+  Animation<Offset> _slideAnimation;
+  Animation<double> _opacityAnimation;
 
   /* Methods */
   void _switchAuthMode() {
@@ -37,10 +41,12 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _authMode = AuthMode.SignUp;
       });
+      _authFormAnimationController.forward();
     } else {
       setState(() {
         _authMode = AuthMode.SignIn;
       });
+      _authFormAnimationController.reverse();
     }
   }
 
@@ -94,7 +100,6 @@ class _AuthScreenState extends State<AuthScreen> {
       // general error
       var errorMessage = 'Something went wrong, please try again later.';
       await _showErrorDialog(errorMessage);
-
     }
 
     setState(() {
@@ -122,9 +127,42 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   @override
+  void initState() {
+    // set up animation controller
+    _authFormAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0.0, -0.5),
+      end: Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _authFormAnimationController,
+      curve: Curves.easeIn,
+    ));
+
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _authFormAnimationController,
+      curve: Curves.easeIn,
+    ));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // _authFormAnimationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
     var deviceSize = mediaQuery.size;
+    var contentSize = deviceSize.height - mediaQuery.padding.top;
 
     return Scaffold(
       body: LoadingOverlay(
@@ -141,23 +179,17 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 children: [
                   Container(
-                    height: (deviceSize.height - mediaQuery.padding.top) * .9,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Flexible(
-                          flex: 3,
-                          fit: FlexFit.tight,
-                          child: Container(
-                            height: 50,
-                            width: 50,
+                    height: contentSize * .9,
+                    color: Colors.white,
+                    child: LayoutBuilder(
+                      builder: (ctx, constraints) => Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: constraints.maxHeight * .35,
+                            width: double.infinity,
                             alignment: Alignment.bottomLeft,
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(width: 0, color: Colors.white),
-                            ),
+                            padding: const EdgeInsets.all(20),
                             child: (_authMode == AuthMode.SignIn)
                                 ? Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -189,23 +221,20 @@ class _AuthScreenState extends State<AuthScreen> {
                                     ),
                                   ),
                           ),
-                        ),
-                        Flexible(
-                          flex: 5,
-                          fit: FlexFit.tight,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(width: 0, color: Colors.white),
-                            ),
-                            child: Form(
-                              key: _formKey,
-                              child: Container(
-                                child: Card(
-                                  elevation: 0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
+                          AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.ease,
+                            height: (_authMode == AuthMode.SignIn) ? 280 : 340,
+                            width: constraints.maxWidth * .9,
+                            child: Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Form(
+                                  key: _formKey,
+                                  child: SingleChildScrollView(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
@@ -251,30 +280,38 @@ class _AuthScreenState extends State<AuthScreen> {
                                           },
                                         ),
                                         SizedBox(height: 20),
-                                        if (_authMode == AuthMode.SignUp)
-                                          TextFormField(
-                                            enabled:
-                                                _authMode == AuthMode.SignUp,
-                                            decoration: InputDecoration(
-                                              labelText: 'Confirm Password',
-                                              prefixIcon:
-                                                  Icon(Icons.lock_outline),
-                                            ),
-                                            obscureText: true,
-                                            textInputAction:
-                                                TextInputAction.done,
-                                            validator:
-                                                _authMode == AuthMode.SignUp
-                                                    ? (value) {
-                                                        if (value !=
-                                                            _passwordController
-                                                                .text) {
-                                                          return 'Passwords do not match!';
-                                                        }
-                                                        return null;
-                                                      }
-                                                    : null,
+                                        AnimatedContainer(
+                                          duration: Duration(milliseconds: 300),
+                                          curve: Curves.fastOutSlowIn,
+                                          constraints: BoxConstraints(
+                                            minHeight: (_authMode == AuthMode.SignIn) ? 0 : 60,
+                                            maxHeight: (_authMode == AuthMode.SignIn) ? 0 : 120,
                                           ),
+                                          child: FadeTransition(
+                                            opacity: _opacityAnimation,
+                                            child: SlideTransition(
+                                              position: _slideAnimation,
+                                              child: TextFormField(
+                                                enabled: (_authMode == AuthMode.SignUp),
+                                                decoration: InputDecoration(
+                                                  labelText: 'Confirm Password',
+                                                  prefixIcon: Icon(Icons.lock_outline),
+                                                ),
+                                                obscureText: true,
+                                                textInputAction: TextInputAction.done,
+                                                validator:
+                                                    (_authMode == AuthMode.SignUp)
+                                                        ? (value) {
+                                                            if (value != _passwordController.text) {
+                                                              return 'Passwords do not match!';
+                                                            }
+                                                            return null;
+                                                          }
+                                                        : null,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                         SizedBox(height: 20),
                                         GestureDetector(
                                           onTap: _submit,
@@ -325,14 +362,14 @@ class _AuthScreenState extends State<AuthScreen> {
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   Container(
                     color: Colors.white,
                     alignment: Alignment.center,
-                    height: (deviceSize.height - mediaQuery.padding.top) * .1,
+                    height: contentSize * .1,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
