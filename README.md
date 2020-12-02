@@ -7,6 +7,7 @@ A Shopping App project based on Flutter framework that utilizes the Following
 * Firebase Authentication
 * Http Requests
 * CRUD Functionality
+* Persistent Data
 * Animations
 
 
