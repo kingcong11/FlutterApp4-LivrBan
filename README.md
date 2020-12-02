@@ -1,6 +1,15 @@
 # livrban
 
-A new Flutter project.
+A Shopping App project based on Flutter framework that utilizes the Following
+
+Markup : * RESTful API
+Markup : * Firebase Realtime Database
+Markup : * Firebase Authentication
+Markup : * Http Requests
+Markup : * CRUD Functionality
+Markup : * Animations
+
+
 
 ## Getting Started
 
