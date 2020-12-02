@@ -5,6 +5,9 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:livrban/screens/orders_screen.dart';
 import 'package:provider/provider.dart';
 
+/* Helpers */
+import '../helpers/custom_route.dart';
+
 /* Screens */
 import '../screens/orders_screen.dart';
 import '../screens/user_products_screen.dart';
@@ -91,7 +94,8 @@ class MainDrawer extends StatelessWidget {
               () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pushReplacementNamed('/');
-                Provider.of<AuthenticationService>(context, listen: false).signOut();
+                Provider.of<AuthenticationService>(context, listen: false)
+                    .signOut();
               },
               context,
             ),

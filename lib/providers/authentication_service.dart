@@ -47,6 +47,8 @@ class AuthenticationService with ChangeNotifier {
         _token = extractedResponse['idToken']; //this is for the user's login
         _userId = extractedResponse['localId']; // id of the user
         _expiryDate = DateTime.now().add(Duration(seconds: int.parse(extractedResponse['expiresIn'])));
+
+        print(extractedResponse['expiresIn']);
       }
 
       _autoSignOut();

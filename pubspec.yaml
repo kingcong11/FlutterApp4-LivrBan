@@ -45,6 +45,7 @@ dependencies:
   flutter_spinkit: "^4.1.2"
   flutter_dotenv: ^2.1.0
   shared_preferences: ^0.5.12+4
+  connectivity_widget: ^0.1.7
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,8 @@ flutter:
     - assets/images/products/9-removebg-preview.png
     - assets/images/products/10-removebg-preview.png
     - .env
+    - assets/images/default-placeholder-image.png
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
